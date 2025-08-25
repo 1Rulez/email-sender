@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  email_sender:
+    build: .
+    restart: "always"
+    command: [ "python", "-m", "app" ]
+    ports:
+      - "8899:8000"

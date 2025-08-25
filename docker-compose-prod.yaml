@@ -1,0 +1,22 @@
+services:
+  email_sender:
+    build: .
+    command: [ "python", "-m", "app" ]
+    expose:
+      - "8000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_reverse-proxy"
+      - "traefik.http.middlewares.email-sender-prefix.stripprefix.prefixes=$https_prefix"
+      - "traefik.http.middlewares.email-sender-prefix.stripprefix.forceSlash=false"
+      - "traefik.http.routers.email-sender.tls=true"
+      - "traefik.http.routers.email-sender.rule=Host(`$host`) && PathPrefix(`$https_prefix`)"
+      - "traefik.http.routers.email-sender.middlewares=email-sender-prefix"
+    networks:
+      - traefik_reverse-proxy
+    restart: always
+    scale: 2
+
+networks:
+  traefik_reverse-proxy:
+    external: true
